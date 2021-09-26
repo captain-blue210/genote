@@ -48,7 +48,7 @@ func main() {
 		"DailyNote5":           t.AddDate(0, 0, -2).Format("2006-01-02"),
 		"DailyNote6":           t.AddDate(0, 0, -1).Format("2006-01-02"),
 		"DailyNote7":           t.Format("2006-01-02"),
-		"LastWeekGoals":        extractLastWeekGoals("20210912-20210918"),
+		"LastWeekGoals":        extractLastWeekGoals(getLastWeeklyReview()),
 		"zettelkastenFileName": t.Format("2006-01-02-15-04-05"),
 	}
 
@@ -99,11 +99,20 @@ func createNoteFromTemplate(data map[string]string, notePath string, noteFileNam
 }
 
 func extractLastWeekGoals(lastWeeklyFileName string) string {
-	text, err := ioutil.ReadFile(weeklyNotePath + lastWeeklyFileName + ".md")
+	text, err := ioutil.ReadFile(weeklyNotePath + lastWeeklyFileName)
 	if err != nil {
 		log.Fatal(err)
 		return ""
 	}
 	r := regexp.MustCompile(`(?m)^- Try.*[\s\S\n]*?\n$`)
 	return strings.TrimRight(r.FindString(string(text)), "\n")
+}
+
+func getLastWeeklyReview() string {
+	files, err := ioutil.ReadDir(weeklyNotePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return files[len(files)-1].Name()
 }
