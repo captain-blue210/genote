@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"regexp"
+	"sort"
 	"strconv"
 	"strings"
 	"text/template"
@@ -114,5 +115,21 @@ func getLastWeeklyReview() string {
 		log.Fatal(err)
 	}
 
-	return files[len(files)-1].Name()
+	var fileNames = []time.Time{}
+	for _, v := range files {
+		t, _ := time.Parse("20060102", strings.Replace(strings.Split(v.Name(), "-")[1], ".md", "", 1))
+		fileNames = append(fileNames, t)
+	}
+
+	sort.Slice(fileNames, func(i, j int) bool {
+		return fileNames[i].After(fileNames[j])
+	})
+
+	var result string
+	for _, v := range files {
+		if fileNames[0].Format("20060102") == strings.Replace(strings.Split(v.Name(), "-")[1], ".md", "", 1) {
+			result = v.Name()
+		}
+	}
+	return result
 }
