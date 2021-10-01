@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"os/exec"
 	"regexp"
 	"sort"
 	"strconv"
@@ -53,18 +54,25 @@ func main() {
 		"zettelkastenFileName": t.Format("2006-01-02-15-04-05"),
 	}
 
+	var filePath string
 	switch *optionVal {
 	case "daily":
 		createDailyNote(data, dailyNotePath)
+		filePath = dailyNotePath + data["Today"] + ".md"
 	case "weekly":
 		createWeeklyNote(data, weeklyNotePath, t.Weekday().String())
+		filePath = weeklyNotePath + data["WeeklyFileName"] + ".md"
 	case "zettelkasten":
 		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"], zettelkastenNoteTemplatePath, zettelkastenNoteTemplateName)
+		filePath = notePath + data["zettelkastenFileName"] + ".md"
 	case "research":
 		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"], researchLogNoteTemplatePath, researchLogNoteTemplateName)
+		filePath = notePath + data["zettelkastenFileName"] + ".md"
 	default:
 		fmt.Printf("テンプレートを正しく指定してください %s\n", *optionVal)
 	}
+
+	openCreatedFile(filePath)
 }
 
 func createDailyNote(data map[string]string, dailyNotePath string) {
@@ -132,4 +140,10 @@ func getLastWeeklyReview() string {
 		}
 	}
 	return result
+}
+
+func openCreatedFile(path string) {
+	cmd := exec.Command("code", "-r", path)
+	result, _ := cmd.Output()
+	log.Println(string(result))
 }
