@@ -41,7 +41,7 @@ func main() {
 		"Today":                t.Format("2006-01-02"),
 		"Tomorrow":             t.AddDate(0, 0, 1).Format("2006-01-02"),
 		"LastWeeklyFileName":   t.AddDate(0, 0, -13).Format("20060102") + "-" + t.AddDate(0, 0, -7).Format("20060102"),
-		"WeeklyFileName":       t.AddDate(0, 0, -7).Format("20060102") + "-" + t.Format("20060102"),
+		"WeeklyFileName":       t.AddDate(0, 0, -6).Format("20060102") + "-" + t.Format("20060102"),
 		"NextWeeklyFileName":   t.AddDate(0, 0, 1).Format("20060102") + "-" + t.AddDate(0, 0, 7).Format("20060102"),
 		"DailyNote1":           t.AddDate(0, 0, -6).Format("2006-01-02"),
 		"DailyNote2":           t.AddDate(0, 0, -5).Format("2006-01-02"),
