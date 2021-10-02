@@ -115,10 +115,10 @@ func extractLastWeekGoals(lastWeeklyFileName string) string {
 	}
 	r := regexp.MustCompile(`(?m)^- Try.*[\s\S\n]*?\n$`)
 	// remove "- Try"
-	result := strings.Replace(r.FindString(string(text)), "- Try", "", 1)
+	result := strings.Replace(r.FindString(string(text)), "- Try\n", "", 1)
 
 	// trim head spaces
-	r2 := regexp.MustCompile(`(?m)^\s`)
+	r2 := regexp.MustCompile(`(?m)^\s{2}`)
 	result = r2.ReplaceAllString(result, "")
 	return strings.TrimRight(result, "\n")
 }
