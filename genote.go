@@ -28,6 +28,8 @@ const zettelkastenNoteTemplateName = "zettelkasten-template.md"
 const zettelkastenNoteTemplatePath = "/Users/captain-blue/Library/Mobile Documents/iCloud~md~obsidian/Documents/second-brain/templates/" + zettelkastenNoteTemplateName
 const researchLogNoteTemplateName = "research-log-template.md"
 const researchLogNoteTemplatePath = "/Users/captain-blue/Library/Mobile Documents/iCloud~md~obsidian/Documents/second-brain/templates/" + researchLogNoteTemplateName
+const agileStartNoteTemplateName = "agile-start-template.md"
+const agileStartNoteTemplatePath = "/Users/captain-blue/Library/Mobile Documents/iCloud~md~obsidian/Documents/second-brain/templates/" + agileStartNoteTemplateName
 
 func main() {
 	optionVal := flag.String("t", "", "テンプレートを指定します。")
@@ -67,6 +69,9 @@ func main() {
 		filePath = notePath + data["zettelkastenFileName"] + ".md"
 	case "research":
 		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"], researchLogNoteTemplatePath, researchLogNoteTemplateName)
+		filePath = notePath + data["zettelkastenFileName"] + ".md"
+	case "agile-start":
+		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"], agileStartNoteTemplatePath, agileStartNoteTemplateName)
 		filePath = notePath + data["zettelkastenFileName"] + ".md"
 	default:
 		fmt.Printf("テンプレートを正しく指定してください %s\n", *optionVal)
