@@ -36,69 +36,87 @@ func main() {
 	flag.Parse()
 
 	t := time.Now()
-	data := map[string]string{
-		"CreatedAt":            t.Format("2006-01-02 15:04:05"),
-		"Tags":                 strconv.Itoa(t.Year()) + "/" + t.Format("01"),
-		"Yesterday":            t.AddDate(0, 0, -1).Format("2006-01-02"),
-		"Today":                t.Format("2006-01-02"),
-		"Tomorrow":             t.AddDate(0, 0, 1).Format("2006-01-02"),
-		"LastWeeklyFileName":   t.AddDate(0, 0, -13).Format("20060102") + "-" + t.AddDate(0, 0, -7).Format("20060102"),
-		"WeeklyFileName":       t.AddDate(0, 0, -6).Format("20060102") + "-" + t.Format("20060102"),
-		"NextWeeklyFileName":   t.AddDate(0, 0, 1).Format("20060102") + "-" + t.AddDate(0, 0, 7).Format("20060102"),
-		"DailyNote1":           t.AddDate(0, 0, -6).Format("2006-01-02"),
-		"DailyNote2":           t.AddDate(0, 0, -5).Format("2006-01-02"),
-		"DailyNote3":           t.AddDate(0, 0, -4).Format("2006-01-02"),
-		"DailyNote4":           t.AddDate(0, 0, -3).Format("2006-01-02"),
-		"DailyNote5":           t.AddDate(0, 0, -2).Format("2006-01-02"),
-		"DailyNote6":           t.AddDate(0, 0, -1).Format("2006-01-02"),
-		"DailyNote7":           t.Format("2006-01-02"),
+	createdAt := t.Format("2006-01-02 15:04:05")
+	tags := strconv.Itoa(t.Year()) + "/" + t.Format("01")
+	yesterday := t.AddDate(0, 0, -1).Format("2006-01-02")
+	today := t.Format("2006-01-02")
+	tomorrow := t.AddDate(0, 0, 1).Format("2006-01-02")
+	lastWeeklyFileName := t.AddDate(0, 0, -13).Format("20060102") + "-" + t.AddDate(0, 0, -7).Format("20060102")
+	weeklyFileName := t.AddDate(0, 0, -6).Format("20060102") + "-" + t.Format("20060102")
+	nextWeeklyFileName := t.AddDate(0, 0, 1).Format("20060102") + "-" + t.AddDate(0, 0, 7).Format("20060102")
+	dailyNote1 := t.AddDate(0, 0, -6).Format("2006-01-02")
+	dailyNote2 := t.AddDate(0, 0, -5).Format("2006-01-02")
+	dailyNote3 := t.AddDate(0, 0, -4).Format("2006-01-02")
+	dailyNote4 := t.AddDate(0, 0, -3).Format("2006-01-02")
+	dailyNote5 := t.AddDate(0, 0, -2).Format("2006-01-02")
+	dailyNote6 := t.AddDate(0, 0, -1).Format("2006-01-02")
+	dailyNote7 := t.Format("2006-01-02")
+	zettelkastenFileName := t.Format("2006-01-02-15-04-05")
+
+	data := map[string]interface{}{
+		"CreatedAt":            createdAt,
+		"Tags":                 tags,
+		"Yesterday":            yesterday,
+		"Today":                today,
+		"Tomorrow":             tomorrow,
+		"LastWeeklyFileName":   lastWeeklyFileName,
+		"WeeklyFileName":       weeklyFileName,
+		"NextWeeklyFileName":   nextWeeklyFileName,
+		"DailyNote1":           dailyNote1,
+		"DailyNote2":           dailyNote2,
+		"DailyNote3":           dailyNote3,
+		"DailyNote4":           dailyNote4,
+		"DailyNote5":           dailyNote5,
+		"DailyNote6":           dailyNote6,
+		"DailyNote7":           dailyNote7,
 		"LastWeekGoals":        extractLastWeekGoals(getLastWeeklyReview()),
-		"zettelkastenFileName": t.Format("2006-01-02-15-04-05"),
+		"RemainingTasks":       ExtractYesterdayTasks(dailyNotePath, yesterday),
+		"WeeklyFDL":            ExtractWeeklyFDL(dailyNotePath, []string{dailyNote1, dailyNote2, dailyNote3, dailyNote4, dailyNote5, dailyNote6}),
+		"zettelkastenFileName": zettelkastenFileName,
 	}
 
 	var filePath string
 	switch *optionVal {
 	case "daily":
 		createDailyNote(data, dailyNotePath)
-		filePath = dailyNotePath + data["Today"] + ".md"
+		filePath = dailyNotePath + data["Today"].(string) + ".md"
 	case "weekly":
 		createWeeklyNote(data, weeklyNotePath, t.Weekday().String())
-		filePath = weeklyNotePath + data["WeeklyFileName"] + ".md"
+		filePath = weeklyNotePath + data["WeeklyFileName"].(string) + ".md"
 	case "zettelkasten":
-		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"], zettelkastenNoteTemplatePath, zettelkastenNoteTemplateName)
-		filePath = notePath + data["zettelkastenFileName"] + ".md"
+		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"].(string), zettelkastenNoteTemplatePath, zettelkastenNoteTemplateName)
+		filePath = notePath + data["zettelkastenFileName"].(string) + ".md"
 	case "research":
-		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"], researchLogNoteTemplatePath, researchLogNoteTemplateName)
-		filePath = notePath + data["zettelkastenFileName"] + ".md"
+		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"].(string), researchLogNoteTemplatePath, researchLogNoteTemplateName)
+		filePath = notePath + data["zettelkastenFileName"].(string) + ".md"
 	case "agile-start":
-		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"], agileStartNoteTemplatePath, agileStartNoteTemplateName)
-		filePath = notePath + data["zettelkastenFileName"] + ".md"
+		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"].(string), agileStartNoteTemplatePath, agileStartNoteTemplateName)
+		filePath = notePath + data["zettelkastenFileName"].(string) + ".md"
 	default:
 		fmt.Printf("テンプレートを正しく指定してください %s\n", *optionVal)
 	}
-
 	openCreatedFile(filePath)
 }
 
-func createDailyNote(data map[string]string, dailyNotePath string) {
+func createDailyNote(data map[string]interface{}, dailyNotePath string) {
 	// 本日日付のファイルがなければ作成
-	if _, err := os.Stat(dailyNotePath + data["Today"] + ".md"); os.IsNotExist(err) {
-		createNoteFromTemplate(data, dailyNotePath, data["Today"], dailyNoteTemplatePath, dailyNoteTemplateName)
+	if _, err := os.Stat(dailyNotePath + data["Today"].(string) + ".md"); os.IsNotExist(err) {
+		createNoteFromTemplate(data, dailyNotePath, data["Today"].(string), dailyNoteTemplatePath, dailyNoteTemplateName)
 	} else {
 		log.Println("Daily notesはすでに存在します。")
 	}
 }
 
-func createWeeklyNote(data map[string]string, weeklyNotePath string, weekDay string) {
+func createWeeklyNote(data map[string]interface{}, weeklyNotePath string, weekDay string) {
 	// 土曜日の場合かつ該当するファイルがなければweekly-reviewファイルを作成
-	if _, err := os.Stat(weeklyNotePath + data["WeeklyFileName"] + ".md"); os.IsNotExist(err) && weekDay == "Saturday" {
-		createNoteFromTemplate(data, weeklyNotePath, data["WeeklyFileName"], weeklyNoteTemplatePath, weeklyNoteTemplateName)
+	if _, err := os.Stat(weeklyNotePath + data["WeeklyFileName"].(string) + ".md"); os.IsNotExist(err) && weekDay == "Friday" {
+		createNoteFromTemplate(data, weeklyNotePath, data["WeeklyFileName"].(string), weeklyNoteTemplatePath, weeklyNoteTemplateName)
 	} else {
 		log.Println("Weekly reviewsはすでに存在します。")
 	}
 }
 
-func createNoteFromTemplate(data map[string]string, notePath string, noteFileName string, templatePath string, templateName string) {
+func createNoteFromTemplate(data map[string]interface{}, notePath string, noteFileName string, templatePath string, templateName string) {
 	f, err := os.Create(notePath + noteFileName + ".md")
 	if err != nil {
 		log.Fatal(err)
@@ -110,6 +128,48 @@ func createNoteFromTemplate(data map[string]string, notePath string, noteFileNam
 	if err = te.Execute(f, data); err != nil {
 		log.Fatal(err)
 	}
+}
+
+func ExtractYesterdayTasks(dailyNotePath string, dailyFileName string) string {
+	text, err := ioutil.ReadFile(dailyNotePath + dailyFileName + ".md")
+	if err != nil {
+		log.Fatal(err)
+		return ""
+	}
+	r := regexp.MustCompile(`(?m)^## TODO.*[\s\S\n]*?\n$`)
+	// remove "## TODO"
+	result := strings.Replace(r.FindString(string(text)), "## TODO\n", "", 1)
+
+	return strings.TrimRight(result, "\n")
+}
+
+func ExtractWeeklyFDL(dailyNotePath string, dailyFileNames []string) map[string]string {
+	result := map[string]string{}
+	for _, v := range dailyFileNames {
+		text, err := ioutil.ReadFile(dailyNotePath + v + ".md")
+		if err != nil {
+			log.Fatal(err)
+			return result
+		}
+		// extract Fun
+		r1 := regexp.MustCompile(`(?m)^- Fun.*[\s\S\n]*^- Done`)
+		rep1 := regexp.MustCompile(`(?m)- Fun|- Done`)
+		fun := rep1.ReplaceAllString(r1.FindString(string(text)), "")
+		result["Fun"] += strings.Trim(fun, "\n")
+
+		// extract Done
+		r2 := regexp.MustCompile(`(?m)^- Done.*[\s\S\n]*^- Learn`)
+		rep2 := regexp.MustCompile(`(?m)- Done|- Learn`)
+		done := rep2.ReplaceAllString(r2.FindString(string(text)), "")
+		result["Done"] += strings.Trim(done, "\n")
+
+		// extract Learn
+		r3 := regexp.MustCompile(`(?m)^- Learn.*[\s\S\n]*?\n$`)
+		rep3 := regexp.MustCompile(`(?m)- Learn`)
+		learn := rep3.ReplaceAllString(r3.FindString(string(text)), "")
+		result["Learn"] += strings.Trim(learn, "\n")
+	}
+	return result
 }
 
 func extractLastWeekGoals(lastWeeklyFileName string) string {
@@ -155,6 +215,5 @@ func getLastWeeklyReview() string {
 
 func openCreatedFile(path string) {
 	cmd := exec.Command("code", "-r", path)
-	result, _ := cmd.Output()
-	log.Println(string(result))
+	_, _ = cmd.Output()
 }
