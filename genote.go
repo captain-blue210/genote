@@ -109,7 +109,7 @@ func createDailyNote(data map[string]interface{}, dailyNotePath string) {
 
 func createWeeklyNote(data map[string]interface{}, weeklyNotePath string, weekDay string) {
 	// 土曜日の場合かつ該当するファイルがなければweekly-reviewファイルを作成
-	if _, err := os.Stat(weeklyNotePath + data["WeeklyFileName"].(string) + ".md"); os.IsNotExist(err) && weekDay == "Friday" {
+	if _, err := os.Stat(weeklyNotePath + data["WeeklyFileName"].(string) + ".md"); os.IsNotExist(err) && weekDay == "Saturday" {
 		createNoteFromTemplate(data, weeklyNotePath, data["WeeklyFileName"].(string), weeklyNoteTemplatePath, weeklyNoteTemplateName)
 	} else {
 		log.Println("Weekly reviewsはすでに存在します。")
