@@ -13,7 +13,7 @@ func TestExtractYesterdayTasks(t *testing.T) {
  - プライベート
    - [ ] 英文解釈教室`
 
-	result := ExtractYesterdayTasks("test-file/", "test1")
+	result := ExtractYesterdayTasks("./test-file/", "test1")
 	if result != expected {
 		t.Error("抽出した文字列が想定と異なります")
 		t.Log("result:\n" + result)
@@ -23,15 +23,6 @@ func TestExtractYesterdayTasks(t *testing.T) {
 }
 
 func TestExtractWeeklyFDL(t *testing.T) {
-	// どんな形でほしいか？
-	// - Fun
-	//   - 商品詳細が表示できない問題を解決できた
-	//   - オペレーション改善ツールについて話ができた
-	//   - 明日は代休をとれた
-	// - Done
-	//   - AUDIT回答
-	// - Learn
-	//   - 最近4~5時間しか眠れていないことがfitbitの記録でわかった
 	expected := map[string]string{
 		"Fun":   "  - 商品詳細が表示できない問題を解決できた\n  - オペレーション改善ツールについて話ができた\n  - 明日は代休をとれた\n  - 英文解釈教室、伝わる英語表現法、シェルワンライナーを進められた\n  - 家事などをしっかりこなせて、ベランダ掃除もできた",
 		"Done":  "  - AUDIT回答",
@@ -44,5 +35,16 @@ func TestExtractWeeklyFDL(t *testing.T) {
 		t.Error("抽出した文字列が想定と異なります")
 	} else {
 		t.Log("TestExtractWeeklyFDL passed : \n", result)
+	}
+}
+
+func TestExtractLastWeekGoals(t *testing.T) {
+	expected := "- 週一発信を再開する\n- Flutterで生活費精算アプリ作成\n- 英文解釈教室を毎日１例題\n- 業務で楽しかったこと、楽しくなかったことを意識的に記録する"
+	result := extractLastWeekGoals("20210926-20211002.md")
+	if result != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:\n" + result)
+	} else {
+		t.Log("TestExtractYesterdayTasks passed : \n", result)
 	}
 }

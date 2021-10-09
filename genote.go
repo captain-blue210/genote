@@ -15,7 +15,7 @@ import (
 	"time"
 )
 
-const dailyNotePath = "/Users/captain-blue/Library/Mobile Documents/iCloud~md~obsidian/Documents/second-brain/look-back/daily-notes/"
+const DailyNotePath = "/Users/captain-blue/Library/Mobile Documents/iCloud~md~obsidian/Documents/second-brain/look-back/daily-notes/"
 const dailyNoteTemplateName = "daily-note-template-v2.md"
 const dailyNoteTemplatePath = "/Users/captain-blue/Library/Mobile Documents/iCloud~md~obsidian/Documents/second-brain/templates/" + dailyNoteTemplateName
 
@@ -70,16 +70,16 @@ func main() {
 		"DailyNote6":           dailyNote6,
 		"DailyNote7":           dailyNote7,
 		"LastWeekGoals":        extractLastWeekGoals(getLastWeeklyReview()),
-		"RemainingTasks":       ExtractYesterdayTasks(dailyNotePath, yesterday),
-		"WeeklyFDL":            ExtractWeeklyFDL(dailyNotePath, []string{dailyNote1, dailyNote2, dailyNote3, dailyNote4, dailyNote5, dailyNote6}),
+		"RemainingTasks":       ExtractYesterdayTasks(DailyNotePath, yesterday),
+		"WeeklyFDL":            ExtractWeeklyFDL(DailyNotePath, []string{dailyNote1, dailyNote2, dailyNote3, dailyNote4, dailyNote5, dailyNote6}),
 		"zettelkastenFileName": zettelkastenFileName,
 	}
 
 	var filePath string
 	switch *optionVal {
 	case "daily":
-		createDailyNote(data, dailyNotePath)
-		filePath = dailyNotePath + data["Today"].(string) + ".md"
+		createDailyNote(data, DailyNotePath)
+		filePath = DailyNotePath + data["Today"].(string) + ".md"
 	case "weekly":
 		createWeeklyNote(data, weeklyNotePath, t.Weekday().String())
 		filePath = weeklyNotePath + data["WeeklyFileName"].(string) + ".md"
@@ -136,11 +136,12 @@ func ExtractYesterdayTasks(dailyNotePath string, dailyFileName string) string {
 		log.Fatal(err)
 		return ""
 	}
-	r := regexp.MustCompile(`(?m)^## TODO.*[\s\S\n]*?\n$`)
+	r := regexp.MustCompile(`(?m)^## TODO.*[\s\S\n]*## ふりかえり`)
+	rep := regexp.MustCompile(`(?m)## TODO\n\n|## ふりかえり`)
 	// remove "## TODO"
-	result := strings.Replace(r.FindString(string(text)), "## TODO\n", "", 1)
+	result := rep.ReplaceAllString(r.FindString(string(text)), "")
 
-	return strings.TrimRight(result, "\n")
+	return strings.Trim(result, "\n")
 }
 
 func ExtractWeeklyFDL(dailyNotePath string, dailyFileNames []string) map[string]string {
