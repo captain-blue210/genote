@@ -146,7 +146,7 @@ func ExtractYesterdayTasks(dailyNotePath string, dailyFileName string) string {
 
 func ExtractWeeklyFDL(dailyNotePath string, dailyFileNames []string) map[string]string {
 	result := map[string]string{}
-	for _, v := range dailyFileNames {
+	for i, v := range dailyFileNames {
 		text, err := ioutil.ReadFile(dailyNotePath + v + ".md")
 		if err != nil {
 			log.Fatal(err)
@@ -156,21 +156,30 @@ func ExtractWeeklyFDL(dailyNotePath string, dailyFileNames []string) map[string]
 		r1 := regexp.MustCompile(`(?m)^- Fun.*[\s\S\n]*^- Done`)
 		rep1 := regexp.MustCompile(`(?m)- Fun|- Done`)
 		fun := rep1.ReplaceAllString(r1.FindString(string(text)), "")
-		result["Fun"] += strings.Trim(fun, "\n")
+		result["Fun"] += trim(i, fun)
 
 		// extract Done
 		r2 := regexp.MustCompile(`(?m)^- Done.*[\s\S\n]*^- Learn`)
 		rep2 := regexp.MustCompile(`(?m)- Done|- Learn`)
 		done := rep2.ReplaceAllString(r2.FindString(string(text)), "")
-		result["Done"] += strings.Trim(done, "\n")
-
+		result["Done"] += trim(i, done)
 		// extract Learn
 		r3 := regexp.MustCompile(`(?m)^- Learn.*[\s\S\n]*?\n$`)
 		rep3 := regexp.MustCompile(`(?m)- Learn`)
 		learn := rep3.ReplaceAllString(r3.FindString(string(text)), "")
-		result["Learn"] += strings.Trim(learn, "\n")
+		result["Learn"] += trim(i, learn)
 	}
 	return result
+}
+
+func trim(count int, text string) string {
+	if count == 0 {
+		// 1回目は文頭、文末の改行を削除
+		return strings.Trim(text, "\n")
+	} else {
+		// 2回目以降は文末の改行のみ削除
+		return strings.TrimRight(text, "\n")
+	}
 }
 
 func extractLastWeekGoals(lastWeeklyFileName string) string {

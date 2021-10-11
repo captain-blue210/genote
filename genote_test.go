@@ -1,7 +1,7 @@
 package main
 
 import (
-	"reflect"
+	"log"
 	"testing"
 )
 
@@ -31,10 +31,14 @@ func TestExtractWeeklyFDL(t *testing.T) {
 
 	fileNames := []string{"test1", "test2"}
 	result := ExtractWeeklyFDL("test-file/", fileNames)
-	if reflect.DeepEqual(result, expected) {
-		t.Error("抽出した文字列が想定と異なります")
-	} else {
-		t.Log("TestExtractWeeklyFDL passed : \n", result)
+	for key := range result {
+		if result[key] != expected[key] {
+			log.Println("result : " + result[key])
+			log.Println("expected : " + expected[key])
+			t.Error("抽出した文字列が想定と異なります")
+		} else {
+			t.Log("TestExtractWeeklyFDL passed : \n", result)
+		}
 	}
 }
 
