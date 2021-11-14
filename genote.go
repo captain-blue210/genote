@@ -33,9 +33,13 @@ const agileStartNoteTemplatePath = "/Users/captain-blue/Library/Mobile Documents
 
 func main() {
 	optionVal := flag.String("t", "", "テンプレートを指定します。")
+	datetimeVal := flag.String("d", "", "日付を指定します。")
 	flag.Parse()
 
 	t := time.Now()
+	if *datetimeVal != "" {
+		t, _ = time.Parse("2006-01-02", *datetimeVal)
+	}
 	createdAt := t.Format("2006-01-02 15:04:05")
 	tags := strconv.Itoa(t.Year()) + "/" + t.Format("01")
 	yesterday := t.AddDate(0, 0, -1).Format("2006-01-02")
@@ -108,8 +112,7 @@ func createDailyNote(data map[string]interface{}, dailyNotePath string) {
 }
 
 func createWeeklyNote(data map[string]interface{}, weeklyNotePath string, weekDay string) {
-	// 土曜日の場合かつ該当するファイルがなければweekly-reviewファイルを作成
-	if _, err := os.Stat(weeklyNotePath + data["WeeklyFileName"].(string) + ".md"); os.IsNotExist(err) && weekDay == "Saturday" {
+	if _, err := os.Stat(weeklyNotePath + data["WeeklyFileName"].(string) + ".md"); os.IsNotExist(err) {
 		createNoteFromTemplate(data, weeklyNotePath, data["WeeklyFileName"].(string), weeklyNoteTemplatePath, weeklyNoteTemplateName)
 	} else {
 		log.Println("Weekly reviewsはすでに存在します。")
