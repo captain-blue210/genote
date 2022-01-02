@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"testing"
+	"time"
 )
 
 func TestExtractYesterdayTasks(t *testing.T) {
@@ -50,5 +51,41 @@ func TestExtractLastWeekGoals(t *testing.T) {
 		t.Log("result:\n" + result)
 	} else {
 		t.Log("TestExtractYesterdayTasks passed : \n", result)
+	}
+}
+
+func TestExtractMemo(t *testing.T) {
+	expected := `
+- インセプションデッキ
+  - JuJu
+  - 美味しく焼き肉を食べたい
+
+- 今日のins-pre環境整備で、どうしてもVue側でLOCALのenvファイル内容が使われてしまう問題にハマっていた
+  - ローカルのhostsファイルにins-preのドメインを登録していたのを忘れていた
+  - どうしたらもっと早く気付けたか？
+    - ins-preのitem-webにはちゃんと.env_ins-preの内容が使われていた
+    - ここで、hostsファイルを思いつければよかった
+    - k8sの設定ミスなどを調べようとしていたのがよくなかった
+    - 「.envには正しい内容が登録されているから、他にenvがLOCALになる原因はなにか？」を考えられればよかった
+    - .envには正しい内容が登録されている -> k8sの設定ミスではなさそう
+    - ドメインはins-pre -> ins-preにつないでいるのにローカルなのはおかしい
+    - ローカルで確認用に設定していたhostsファイルが原因ではないか？
+- customer-apiからselect-apiに接続できない問題が発生
+  - 1つ目の原因はポート
+  - 上記で接続はできるようになったけど、取得に失敗する。これはおそらくaccess_keyが違うから
+
+-
+
+- TODOに、「ここまでやる」ラインを設ける（1Day体験からの学び）
+- タイムバケットを作成する`
+
+	ti, _ := time.Parse("2006-01-02", "2022-01-02")
+	result := ExtractMemo("test-file/", 6, ti)
+	if result != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:" + result)
+		t.Log("expected:" + expected)
+	} else {
+		t.Log("TestExtractMemo passed : \n", result)
 	}
 }

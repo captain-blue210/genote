@@ -96,8 +96,12 @@ func main() {
 	case "agile-start":
 		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"].(string), agileStartNoteTemplatePath, agileStartNoteTemplateName)
 		filePath = notePath + data["zettelkastenFileName"].(string) + ".md"
+	case "memo":
+		fmt.Println(ExtractMemo(DailyNotePath, 6, t))
+		os.Exit(0)
 	default:
 		fmt.Printf("テンプレートを正しく指定してください %s\n", *optionVal)
+		os.Exit(1)
 	}
 	openCreatedFile(filePath)
 }
@@ -229,4 +233,33 @@ func getLastWeeklyReview() string {
 func openCreatedFile(path string) {
 	cmd := exec.Command("code", "-r", path)
 	_, _ = cmd.Output()
+}
+
+func createDailyNotePath(days int, dailyNotePath string, t time.Time) []string {
+	var result []string
+	for i := -days; i < 0; i++ {
+		dailyNote := t.AddDate(0, 0, i).Format("2006-01-02")
+		path := dailyNotePath + dailyNote + ".md"
+		result = append(result, path)
+	}
+	return result
+}
+
+func ExtractMemo(dailyNotePath string, days int, t time.Time) string {
+	result := "\n"
+	paths := createDailyNotePath(days, dailyNotePath, t)
+	for i, f := range paths {
+		text, err := ioutil.ReadFile(f)
+		if err != nil {
+			log.Fatal(err)
+			return result
+		}
+
+		// extract メモ
+		r1 := regexp.MustCompile(`(?m)^## メモ.*[\s\S\n]*`)
+		rep1 := regexp.MustCompile(`(?m)## メモ`)
+		memo := rep1.ReplaceAllString(r1.FindString(string(text)), "")
+		result += trim(i, memo)
+	}
+	return result
 }
