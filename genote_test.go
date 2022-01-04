@@ -91,23 +91,6 @@ func TestExtractMemo(t *testing.T) {
 	}
 }
 
-// func TestCreateMonthlyNote(t *testing.T) {
-// 	expected, err := ioutil.ReadFile("test-file/2021-08.md")
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
-
-// 	ti, _ := time.Parse("2006-01-02", "2021-08-02")
-// 	result := CreateMonthlyNote(CreateBasicData("2021-08"), MonthlyNotePath, ti.Month())
-// 	if result != expected {
-// 		t.Error("抽出した文字列が想定と異なります")
-// 		t.Log("result:" + result)
-// 		t.Log("expected:" + expected)
-// 	} else {
-// 		t.Log("TestCreateMonthlyNote passed : \n", result)
-// 	}
-// }
-
 func TestGetCurrentQuarterFirst(t *testing.T) {
 	expected := "1~3月"
 	ti, _ := time.Parse("2006-01-02", "2022-01-02")
@@ -194,25 +177,41 @@ func TestGetCurrentOKR(t *testing.T) {
 		t.Log("TestGetCurrentOKR passed : \n", result)
 	}
 }
-func TestExtractMonthlyKPT(t *testing.T) {
 
-	type args struct {
-		weeklyNotePath string
-	}
+// func TestExtractMonthlyKPT(t *testing.T) {
 
-	tests := []struct {
-		name string
-		args args
-	}{
-		{"test", args{"test-file/weekly-reviews/"}},
-	}
+// 	type args struct {
+// 		weeklyNotePath string
+// 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			ExtractMonthlyKPT(tt.args.weeklyNotePath)
-		})
-	}
-}
+// 	tests := []struct {
+// 		name string
+// 		args args
+// 	}{
+// 		{"test", args{"test-file/weekly-reviews/"}},
+// 	}
+
+// 	for _, tt := range tests {
+// 		t.Run(tt.name, func(t *testing.T) {
+// 			ExtractMonthlyKPT(tt.args.weeklyNotePath)
+// 		})
+// 	}
+// }
 func TestExtractMonthlyArticles(t *testing.T) {
+	expected := `MacとLinuxそれぞれでdateコマンド使って日付計算する
+https://zenn.dev/captain_blue/articles/using-the-date-on-mac-and-linux
+動的コンポーネントで@clickが動かないときは@click.nativeを使う
+https://zenn.dev/captain_blue/articles/nuxt-click-event-does-not-move
+`
 
+	ti, _ := time.Parse("2006-01", "2021-11")
+	result := ExtractMonthlyArticles(ti)
+
+	if result != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:" + result)
+		t.Log("expected:" + expected)
+	} else {
+		t.Log("TestExtractMonthlyArticles passed : \n", result)
+	}
 }

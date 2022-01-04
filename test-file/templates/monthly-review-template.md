@@ -17,10 +17,10 @@ tags: ['Look-Back/Monthly-Review', "{{.Tags}}"]
 
 - Keep
 {{.MonthlyKPT.Keep}}
-- Try
-{{.MonthlyKPT.Try}}
 - Problem
 {{.MonthlyKPT.Probrem}}
+- Try
+{{.MonthlyKPT.Try}}
 
 ## 技術
 
@@ -30,12 +30,11 @@ tags: ['Look-Back/Monthly-Review', "{{.Tags}}"]
 
 ## 読書
 
-{{.MonthlyReadingList}}
 
 ## ふりかえり
 
 - Keep
-- Probrem
+- Problem
 - Try
 
 ## メモ
