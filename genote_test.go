@@ -2,6 +2,7 @@ package main
 
 import (
 	"log"
+	"strconv"
 	"testing"
 	"time"
 )
@@ -88,4 +89,130 @@ func TestExtractMemo(t *testing.T) {
 	} else {
 		t.Log("TestExtractMemo passed : \n", result)
 	}
+}
+
+// func TestCreateMonthlyNote(t *testing.T) {
+// 	expected, err := ioutil.ReadFile("test-file/2021-08.md")
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+
+// 	ti, _ := time.Parse("2006-01-02", "2021-08-02")
+// 	result := CreateMonthlyNote(CreateBasicData("2021-08"), MonthlyNotePath, ti.Month())
+// 	if result != expected {
+// 		t.Error("抽出した文字列が想定と異なります")
+// 		t.Log("result:" + result)
+// 		t.Log("expected:" + expected)
+// 	} else {
+// 		t.Log("TestCreateMonthlyNote passed : \n", result)
+// 	}
+// }
+
+func TestGetCurrentQuarterFirst(t *testing.T) {
+	expected := "1~3月"
+	ti, _ := time.Parse("2006-01-02", "2022-01-02")
+	result := GetCurrentQuarter(ti.Month())
+
+	if result != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:" + result)
+		t.Log("expected:" + expected)
+	} else {
+		t.Log("TestGetCurrentQuarterFirst passed : \n", result)
+	}
+}
+
+func TestGetCurrentQuarterSecond(t *testing.T) {
+	expected := "4~6月"
+	ti, _ := time.Parse("2006-01-02", "2022-04-02")
+	result := GetCurrentQuarter(ti.Month())
+
+	if result != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:" + result)
+		t.Log("expected:" + expected)
+	} else {
+		t.Log("TestGetCurrentQuarterFirst passed : \n", result)
+	}
+}
+
+func TestGetCurrentQuarterThird(t *testing.T) {
+	expected := "7~9月"
+	ti, _ := time.Parse("2006-01-02", "2022-07-02")
+	result := GetCurrentQuarter(ti.Month())
+
+	if result != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:" + result)
+		t.Log("expected:" + expected)
+	} else {
+		t.Log("TestGetCurrentQuarterFirst passed : \n", result)
+	}
+}
+
+func TestGetCurrentQuarterFourth(t *testing.T) {
+	expected := "10~12月"
+	ti, _ := time.Parse("2006-01-02", "2022-10-02")
+	result := GetCurrentQuarter(ti.Month())
+
+	if result != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:" + result)
+		t.Log("expected:" + expected)
+	} else {
+		t.Log("TestGetCurrentQuarterFirst passed : \n", result)
+	}
+}
+
+func TestGetCurrentOKR(t *testing.T) {
+	expected := `### 1~3月
+
+- Objective1: 目標1だよ
+  - Key Result1: 成果指標1
+    - Score:
+  - Key Result2: 成果指標2
+    - Score:
+- Objective2: 目標2だよ
+  - Key Result1: 成果指標1
+    - Score:
+  - Key Result2: 成果指標2
+    - Score:
+- Objective3: 目標3だよ
+  - Key Result1: 成果指標1
+    - Score:
+  - Key Result2: 成果指標2
+    - Score:`
+
+	ti, _ := time.Parse("2006-01-02", "2022-02-02")
+	result := GetCurrentOKR("test-file/", strconv.Itoa(ti.Year()), GetCurrentQuarter(ti.Month()))
+
+	if result["GoalsAndResults"] != expected {
+		t.Error("抽出した文字列が想定と異なります")
+		t.Log("result:" + result["GoalsAndResults"])
+		t.Log("expected:" + expected)
+	} else {
+		t.Log("TestGetCurrentOKR passed : \n", result)
+	}
+}
+func TestExtractMonthlyKPT(t *testing.T) {
+
+	type args struct {
+		weeklyNotePath string
+	}
+
+	tests := []struct {
+		name string
+		args args
+	}{
+		{"test", args{"test-file/weekly-reviews/"}},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ExtractMonthlyKPT(tt.args.weeklyNotePath)
+		})
+	}
+}
+func TestExtractMonthlyArticles(t *testing.T) {
+
 }
