@@ -42,12 +42,15 @@ const agileStartNoteTemplatePath = "/Users/captain-blue/Library/Mobile Documents
 func main() {
 	optionVal := flag.String("t", "", "テンプレートを指定します。")
 	datetimeVal := flag.String("d", "", "日付を指定します。")
+	backDaysVal := flag.Int("bd", 6, "メモ出力でさかのぼる日数を指定します")
 	flag.Parse()
 
 	t := time.Now()
+
 	if *datetimeVal != "" {
 		t, _ = time.Parse("2006-01-02", *datetimeVal)
 	}
+
 	data := CreateBasicData(datetimeVal, t)
 
 	var filePath string
@@ -71,7 +74,7 @@ func main() {
 		createNoteFromTemplate(data, notePath, data["zettelkastenFileName"].(string), agileStartNoteTemplatePath, agileStartNoteTemplateName)
 		filePath = notePath + data["zettelkastenFileName"].(string) + ".md"
 	case "memo":
-		fmt.Println(ExtractMemo(DailyNotePath, 6, t))
+		fmt.Println(ExtractMemo(DailyNotePath, *backDaysVal, t))
 		os.Exit(0)
 	default:
 		fmt.Printf("テンプレートを正しく指定してください %s\n", *optionVal)
